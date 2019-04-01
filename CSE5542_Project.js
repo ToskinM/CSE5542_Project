@@ -14,14 +14,14 @@
 			
 		// Create the scene and set the scene size.
 		scene = new THREE.Scene();
-		//scene.fog = new THREE.Fog( 0x000000, 0, 250 );
+		scene.fog = new THREE.Fog( 0x000000, 0, 250 );
 		
 		camera = new THREE.PerspectiveCamera(FOV, WIDTH / HEIGHT, 0.001, 700);
+		translateGlobal(camera, 0,40,0);
 		scene.add(camera);
 			
 		// Create a renderer and add it to the DOM, enable shadows.
 		renderer = new THREE.WebGLRenderer({antialias:true});
-		//renderer.setSize(WIDTH, HEIGHT);
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
