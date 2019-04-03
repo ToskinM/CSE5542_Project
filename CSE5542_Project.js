@@ -1,10 +1,11 @@
 	var scene, camera, renderer, stereoEffect, controls;
-	var ground, roombaCat, catHead, cat;
+	var ground, roombaCat, catHead, cat, specimen;
 	var FOV = 90;
 	var WIDTH, HEIGHT;
 			
 	init();
 	createRoombaCat();
+	createSpecimen();
 	animate();
 	
 	// Sets up the scene
@@ -215,6 +216,37 @@
 		
 	}
 	
+	// 
+	// function createDescriptionTextBox() {		
+		// var geometry = new THREE.PlaneGeometry();
+		// var planeMesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({ wireframe: true }) );
+		// scene.add(planeMesh);
+	// }
+	
+	function createSpecimen() {		
+		var mtlLoader = new THREE.MTLLoader();
+		mtlLoader.load("Specimen/TexturesCom_BirchTree_lp.mtl", function(materials){
+			
+			materials.preload();
+			var objLoader = new THREE.OBJLoader();
+			objLoader.setMaterials(materials);
+			
+			objLoader.load("Specimen/TexturesCom_BirchTree_lp.obj", function(mesh){
+			
+				mesh.traverse(function(node){
+					if( node instanceof THREE.Mesh ){
+						node.castShadow = true;
+						node.receiveShadow = true;
+					}
+				});
+			
+				specimen = mesh;
+				scene.add(specimen);
+			});
+			
+		});
+	}
+	
 	// Renders the scene and updates the render as needed.
 	function animate() {
 		requestAnimationFrame(animate);
@@ -224,6 +256,10 @@
 		roombaCat.position.set(0, 0, 0);
 		rotateDegrees(roombaCat, 0, 1, 0);
 		translate(roombaCat, 20, 0, 0);
+		
+		specimen.position.set(0, 0, 0);
+		rotateDegrees(specimen, 0, 1, 0);
+		translate(specimen, 20, 0, 40);
 
 		stereoEffect.render(scene, camera);
 	}
