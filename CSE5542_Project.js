@@ -2,20 +2,28 @@
 	var ground, roombaCat, catHead, cat, specimen;
 	var FOV = 90;
 	var WIDTH, HEIGHT;
+	
+	var assetPath = "Specimen/";
+	var runninglocally = true;
 			
 	init();
-	createRoombaCat();
+	//createRoombaCat();
 	createSpecimen();
 	animate();
 	
 	// Sets up the scene
     function init() {
+		if (!runninglocally){
+			assetPath = "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
+		}
+	
 		WIDTH = window.innerWidth;
 		HEIGHT = window.innerHeight;
 			
 		// Create the scene and set the scene size.
 		scene = new THREE.Scene();
-		scene.fog = new THREE.Fog( 0x000000, 0, 250 );
+		scene.background = new THREE.Color( 0x424242 );
+		scene.fog = new THREE.Fog( 0x424242, 0, 300 );
 		
 		camera = new THREE.PerspectiveCamera(FOV, WIDTH / HEIGHT, 0.001, 700);
 		translateGlobal(camera, 0,40,0);
@@ -89,7 +97,7 @@
 		}
 		
 		// Allow fullscreen on screen click
-		element.addEventListener('click', fullscreen, false);
+		//renderer.domElement.addEventListener('click', fullscreen, false);
 		window.removeEventListener('deviceorientation', setOrientationControls, true);
 	}
 	
@@ -223,15 +231,24 @@
 		// scene.add(planeMesh);
 	// }
 	
-	function createSpecimen() {		
+function createSpecimen() {	
+		// ground
+		var groundMaterial = new THREE.MeshLambertMaterial ( { color: 0x212121 } );
+		var geometry = new THREE.PlaneGeometry( 2000, 2000, 10, 10 );
+		ground = CreateMeshWithShadows( geometry, groundMaterial );
+		scene.add( ground );
+		translateGlobal(ground, 0, -50, 0);
+		rotateDegrees(ground, -90, 0, 0);
+		
 		var mtlLoader = new THREE.MTLLoader();
-		mtlLoader.load("Specimen/TexturesCom_BirchTree_lp.mtl", function(materials){
+		mtlLoader.setPath( assetPath )
+		mtlLoader.load("TexturesCom_BirchTree_lp.mtl", function(materials){
 			
 			materials.preload();
 			var objLoader = new THREE.OBJLoader();
+			objLoader.setPath( assetPath )
 			objLoader.setMaterials(materials);
-			
-			objLoader.load("Specimen/TexturesCom_BirchTree_lp.obj", function(mesh){
+			objLoader.load("TexturesCom_BirchTree_lp.obj", function(mesh){
 			
 				mesh.traverse(function(node){
 					if( node instanceof THREE.Mesh ){
@@ -241,6 +258,8 @@
 				});
 			
 				specimen = mesh;
+				specimen.position.set(0, 20, 50);
+				specimen.scale.set(0.2, 0.2, 0.2);
 				scene.add(specimen);
 			});
 			
@@ -251,15 +270,6 @@
 	function animate() {
 		requestAnimationFrame(animate);
 
-		// Move the roombaCat around in a circle
-
-		roombaCat.position.set(0, 0, 0);
-		rotateDegrees(roombaCat, 0, 1, 0);
-		translate(roombaCat, 20, 0, 0);
-		
-		specimen.position.set(0, 0, 0);
-		rotateDegrees(specimen, 0, 1, 0);
-		translate(specimen, 20, 0, 40);
 
 		stereoEffect.render(scene, camera);
 	}
