@@ -12,7 +12,7 @@ newmtl _TexturesCom_BirchTree_lpdefault
 	Kd 0.5000 0.5000 0.5000
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka TexturesCom_BirchTree_1K_albedo.tif
-	map_Kd TexturesCom_BirchTree_1K_albedo.tif
-	map_refl TexturesCom_BirchTree_1K_roughness.tif
-	map_bump TexturesCom_BirchTree_1K_normal.tif
+	map_Ka TexturesCom_BirchTree_512_albedo.dds
+	map_Kd TexturesCom_BirchTree_512_albedo.dds
+	map_refl TexturesCom_BirchTree_512_roughness.dds
+	map_bump TexturesCom_BirchTree_512_normal.dds

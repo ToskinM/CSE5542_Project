@@ -3,19 +3,26 @@
 	var FOV = 90;
 	var WIDTH, HEIGHT;
 	
-	var assetPath = "Specimen/";
-	var runninglocally = true;
+	var assetPath = "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
+	var proxyPath = "https://cors-anywhere.herokuapp.com/";
+	
+	// Set this to true to get models to load when testing locally.
+	// SET TO FALSE BEFORE UPLOADING TO WEBSITE
+	var runningLocally = false;
 			
 	init();
 	//createRoombaCat();
 	createSpecimen();
-	animate();
+	//animate();
 	
 	// Sets up the scene
     function init() {
-		if (!runninglocally){
-			assetPath = "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
+		if (runningLocally){
+			assetPath = proxyPath + "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
 		}
+		
+	
+		specimen = new THREE.Object3D();
 	
 		WIDTH = window.innerWidth;
 		HEIGHT = window.innerHeight;
@@ -34,21 +41,18 @@
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+		
 		document.body.appendChild(renderer.domElement);
+		document.body.appendChild( WEBVR.createButton( renderer ) );
+		renderer.vr.enabled = true;
 		
 		stereoEffect = new THREE.StereoEffect(renderer);
 		stereoEffect.setSize( WIDTH, HEIGHT );
-		
-		//camera = new THREE.PerspectiveCamera(FOV, WIDTH / HEIGHT, 0.1, 20000);
-		//translateGlobal(camera, 0,6,100);
-		//scene.add(camera);
 		
 		// Create an event listener that resizes the renderer with the browser window and updates camera aspects.
 		window.addEventListener('resize', function() {
 			WIDTH = window.innerWidth;
 			HEIGHT = window.innerHeight;
-			
-			//renderer.setSize(WIDTH, HEIGHT);
 			
 			camera.aspect = WIDTH / HEIGHT
 			
@@ -58,7 +62,7 @@
 		});
 		
 	    // Create a light, set its position, and add it to the scene.
-		var light = new THREE.PointLight( 0xffffff, 1, 100 );
+		var light = new THREE.PointLight( 0xefebd8, 4, 100 );
 		light.position.set(0,50,0);
 		light.castShadow = true;
 		scene.add(light);
@@ -67,7 +71,6 @@
 		var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.7 );
 		light.castShadow = true;
 		scene.add( directionalLight );
-
 		
 		//var helper = new THREE.CameraHelper( light.shadow.camera );
 		//scene.add( helper );
@@ -79,8 +82,8 @@
 			camera.position.y,
 			camera.position.z
 		);
-		controls.noPan = true;
-		controls.noZoom = true;
+		controls.enablePan = false;
+		controls.enableZoom = false;
 		
 		// Setup DeviceOrientation functionality
 		window.addEventListener('deviceorientation', setOrientationControls, true);
@@ -101,178 +104,67 @@
 		window.removeEventListener('deviceorientation', setOrientationControls, true);
 	}
 	
-	// Creates roomba cat.
-	function createRoombaCat() {
-		// Materials
-		var groundMaterial = new THREE.MeshLambertMaterial ( { color: 0x80c0fa } );
-		var roombaMaterial = new THREE.MeshLambertMaterial ( { color: 0xf0f0f0 } );
-		var catMaterial = new THREE.MeshLambertMaterial ( { color: 0x303030 } );
-		var catEyeMaterial = new THREE.MeshBasicMaterial ( { color: 0x00ff00 } ); // keep this toony material for glowing eyes
-		var haloMaterial = new THREE.MeshLambertMaterial ( { color: 0xffffc0 } );
-		
-		// ground
-		var geometry = new THREE.PlaneGeometry( 2000, 2000, 10, 10 );
-		ground = CreateMeshWithShadows( geometry, groundMaterial );
-		scene.add( ground );
-		translateGlobal(ground, 0, -1.5, 0);
-		rotateDegrees(ground, -90, 0, 0);
-		
-		// Roomba body
-		var geometry = new THREE.CylinderGeometry( 10, 10, 3, 16 );
-		var roombaBody = CreateMeshWithShadows( geometry, roombaMaterial );
-		scene.add( roombaBody );
-		
-		// Cat base
-		var points = [];
-		for ( var i = 0; i < 10; i ++ ) {
-			points.push( new THREE.Vector2( Math.sin( i * 0.2 ) * 10 + 5, ( i - 5 ) * 2 ) );
-		}
-		geometry = new THREE.LatheGeometry( points );
-		var catBase = CreateMeshWithShadows( geometry, catMaterial );
-		scene.add( catBase );
-		rotateDegrees(catBase, 180, 0, 0);
-		scale(catBase, 0.5, 0.5, 0.5)
-		translateGlobal(catBase, 0, 5.5, 0);
-		
-		// Cat tail
-		geometry = new THREE.CylinderGeometry( 1, 1, 20, 8 );
-		var catTail = CreateMeshWithShadows( geometry, catMaterial );
-		scene.add( catTail );
-		translateGlobal(catTail, -8, 12, 0);
-		rotateDegrees(catTail, 0, 0, 10);
-		
-		// Cat body
-		geometry = new THREE.CylinderGeometry( 2, 5, 15, 8 );
-		var catBody = CreateMeshWithShadows( geometry, catMaterial );
-		scene.add( catBody );
-		translateGlobal(catBody, 1, 9, 0);
-		
-		// Cat head
-		geometry = new THREE.IcosahedronGeometry( 4, 1);
-		var catHeadBase = CreateMeshWithShadows( geometry, catMaterial );
-		scene.add( catHeadBase );
-		translateGlobal(catHeadBase, 1, 18, 0);
-		rotateDegrees(catTail, 0, 90, 0);
-		
-		// Cat ear right
-		var geometry = new THREE.ConeGeometry( 2, 3, 3 );
-		var catEarR = new THREE.Mesh( geometry, catMaterial );
-		scene.add( catEarR );
-		translateGlobal(catEarR, 1, 21.5, 3);
-		rotateDegrees(catEarR, 45, 0, 0);
-		
-		// Cat ear left
-		var catEarL = catEarR.clone();
-		scene.add( catEarL );
-		translateGlobal(catEarL, 0, 0, -6);
-		rotateDegrees(catEarL, -90, 0, 0);
-		
-		// Cat eye right
-		geometry = new THREE.SphereGeometry( 1, 2, 5);
-		var catEyeR = new THREE.Mesh( geometry, catEyeMaterial );
-		scene.add( catEyeR );
-		translateGlobal(catEyeR, 4, 19.5, 1.5);
-		
-		// Cat eye left
-		var catEyeL = catEyeR.clone();
-		scene.add( catEyeL );
-		translateGlobal(catEyeL, 0, 0, -3);
-		
-		// Cat halo
-		geometry = new THREE.TorusGeometry( 3, 0.5, 4, 16 );
-		var halo = new THREE.Mesh( geometry, haloMaterial );
-		scene.add( halo );
-		translateGlobal(halo, 1, 24, 0);
-		rotateDegrees(halo, 95, 0, 0);
-
-		// Set up hierarchy
-		//				   scene
-		//				   roombaCat
-		//			roomba 			cat
-		//			roombaBody		catBody, catTail, catHead
-		//											  catHeadBase, catEyeL, catEyeR, halo
-		//
-		roombaCat = new THREE.Group();
-		cat = new THREE.Group();
-		var roomba = new THREE.Group();
-		catHead = new THREE.Group();
-		
-		roombaCat.name = roombaCat;
-		cat.name = cat;
-		roomba.name = roomba;
-		catHead.name = catHead;
-		
-		roomba.add( roombaBody );
-		
-		cat.add( catBase );
-		cat.add( catTail );
-		cat.add( catBody );
-		cat.add( catHead );
-		
-		catHead.add( catHeadBase );
-		catHead.add( catEyeL );
-		catHead.add( catEyeR );
-		catHead.add( catEarR );
-		catHead.add( catEarL );
-		catHead.add( halo );
-		
-		roombaCat.add( roomba );
-		roombaCat.add( cat );
-		
-		scene.add( roombaCat );
-		
-		
-	}
-	
-	// 
-	// function createDescriptionTextBox() {		
-		// var geometry = new THREE.PlaneGeometry();
-		// var planeMesh = new THREE.Mesh( geometry, new THREE.MeshBasicMaterial({ wireframe: true }) );
-		// scene.add(planeMesh);
-	// }
-	
-function createSpecimen() {	
+	function createSpecimen() {	
 		// ground
 		var groundMaterial = new THREE.MeshLambertMaterial ( { color: 0x212121 } );
 		var geometry = new THREE.PlaneGeometry( 2000, 2000, 10, 10 );
 		ground = CreateMeshWithShadows( geometry, groundMaterial );
 		scene.add( ground );
-		translateGlobal(ground, 0, -50, 0);
+		translateGlobal(ground, 0, -80, 0);
 		rotateDegrees(ground, -90, 0, 0);
 		
-		var mtlLoader = new THREE.MTLLoader();
-		mtlLoader.setPath( assetPath )
-		mtlLoader.load("TexturesCom_BirchTree_lp.mtl", function(materials){
-			
-			materials.preload();
-			var objLoader = new THREE.OBJLoader();
-			objLoader.setPath( assetPath )
-			objLoader.setMaterials(materials);
-			objLoader.load("TexturesCom_BirchTree_lp.obj", function(mesh){
-			
-				mesh.traverse(function(node){
-					if( node instanceof THREE.Mesh ){
-						node.castShadow = true;
-						node.receiveShadow = true;
-					}
-				});
-			
-				specimen = mesh;
-				specimen.position.set(0, 20, 50);
-				specimen.scale.set(0.2, 0.2, 0.2);
-				scene.add(specimen);
-			});
-			
-		});
+		// Load the specimen model and textures
+		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
+		new THREE.MTLLoader()
+			.setPath( assetPath )
+			.load( 'TexturesCom_BirchTree_lp.mtl', function ( materials ) {
+				materials.preload();
+				new THREE.OBJLoader()
+					.setMaterials( materials )
+					.setPath( assetPath )
+					.load( 'TexturesCom_BirchTree_lp.obj', function ( object ) {
+						
+						// Position specimen in scene
+						specimen = object
+						specimen.position.set(0, 70, 30);
+						specimen.scale.set(0.2, 0.2, 0.2);
+						rotateDegrees(specimen, 90, 180, 0);
+						scene.add(specimen);
+						
+					}, onLoadOBJ, onProgressOBJ );
+		}, onProgressMTL );
+	}
+	function onLoadOBJ() {
+		console.log("Object Loaded!");
+	}
+	function onProgressOBJ(xhr){
+		if ( xhr.lengthComputable ) {
+			var percentComplete = xhr.loaded / xhr.total * 100;
+			console.log('Object ' + Math.round( percentComplete, 2 ) + '% downloaded' );
+		}
+	}
+	function onLoadMTL() {
+		console.log("Material Loaded!");
+	}
+	function onProgressMTL(xhr){
+		if ( xhr.lengthComputable ) {
+			var percentComplete = xhr.loaded / xhr.total * 100;
+			console.log( 'Material ' + Math.round( percentComplete, 2 ) + '% downloaded' );
+		}
 	}
 	
 	// Renders the scene and updates the render as needed.
-	function animate() {
-		requestAnimationFrame(animate);
+	// function animate() {
+		// requestAnimationFrame(animate);
 
+		// //rotateDegrees(specimen, 0, 0, 1);
 
+		// stereoEffect.render(scene, camera);
+	// }
+	
+	renderer.setAnimationLoop( function () {
 		stereoEffect.render(scene, camera);
-	}
+	} );
 	
 	//====================== Transform Library ======================//
 	
