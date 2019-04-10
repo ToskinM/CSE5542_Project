@@ -11,7 +11,7 @@
 	// Set this to true to get models to load when testing locally.
 	// SET TO FALSE BEFORE UPLOADING TO WEBSITE OR PUSHING
 	// If you get a CORS Policy error, its probably this
-	var runningLocally = true;
+	var runningLocally = false;
 			
 	init();
 	//createRoombaCat();
