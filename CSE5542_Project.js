@@ -12,7 +12,7 @@
 	// Set this to true to get models to load when testing locally.
 	// SET TO FALSE BEFORE UPLOADING TO WEBSITE OR PUSHING
 	// If you get a CORS Policy error, its probably this
-	var runningLocally = false;
+	var runningLocally = true;
 			
 	init();
 	//createRoombaCat();
@@ -120,13 +120,13 @@
 		// Load the specimen model and textures
 		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 		new THREE.MTLLoader()
-			//.setPath( assetPath )
-			.load( proxyPath + 'https://raw.githubusercontent.com/ToskinM/CSE5542_Project/master/Specimen/TexturesCom_BirchTree_lp.mtl?token=ApxInXvwfIXDxwuUEZnjxUKnMAckGSH9ks5ct5cVwA%3D%3D', function ( materials ) {
+			.setPath( assetPath )
+			.load( 'TexturesCom_BirchTree_lp.mtl', function ( materials ) {
 				materials.preload();
 				new THREE.OBJLoader()
 					.setMaterials( materials )
-					//.setPath( assetPath )
-					.load( proxyPath + 'https://raw.githubusercontent.com/ToskinM/CSE5542_Project/master/Specimen/TexturesCom_BirchTree_lp.obj?token=ApxInUqQttEhSXfJCxoGAqCiha4anmU9ks5ct5SxwA%3D%3D', function ( object ) {
+					.setPath( assetPath )
+					.load( 'TexturesCom_BirchTree_lp.obj', function ( object ) {
 						
 						// Position specimen in scene
 						specimen = object
