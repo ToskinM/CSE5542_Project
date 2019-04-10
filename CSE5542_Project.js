@@ -6,9 +6,12 @@
 	var assetPath = "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
 	var proxyPath = "https://cors-anywhere.herokuapp.com/";
 	
+	// Website: https://cse5542projectwlmt.weebly.com
+	
 	// Set this to true to get models to load when testing locally.
-	// SET TO FALSE BEFORE UPLOADING TO WEBSITE
-	var runningLocally = false;
+	// SET TO FALSE BEFORE UPLOADING TO WEBSITE OR PUSHING
+	// If you get a CORS Policy error, its probably this
+	var runningLocally = true;
 			
 	init();
 	//createRoombaCat();
@@ -21,7 +24,6 @@
 			assetPath = proxyPath + "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
 		}
 		
-	
 		specimen = new THREE.Object3D();
 	
 		WIDTH = window.innerWidth;
@@ -126,7 +128,7 @@
 						
 						// Position specimen in scene
 						specimen = object
-						specimen.position.set(0, 70, 30);
+						specimen.position.set(30, 70, 0);
 						specimen.scale.set(0.2, 0.2, 0.2);
 						rotateDegrees(specimen, 90, 180, 0);
 						scene.add(specimen);
