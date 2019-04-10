@@ -12,7 +12,7 @@ newmtl _TexturesCom_BirchTree_lpdefault
 	Kd 0.5000 0.5000 0.5000
 	Ks 0.0000 0.0000 0.0000
 	Ke 0.0000 0.0000 0.0000
-	map_Ka https://github.com/ToskinM/CSE5542_Project/raw/master/Specimen/TexturesCom_BirchTree_512_albedo.png
-	map_Kd https://github.com/ToskinM/CSE5542_Project/raw/master/Specimen/TexturesCom_BirchTree_512_albedo.png
-	map_refl https://github.com/ToskinM/CSE5542_Project/raw/master/Specimen/TexturesCom_BirchTree_512_roughness.png
-	map_bump https://github.com/ToskinM/CSE5542_Project/raw/master/Specimen/TexturesCom_BirchTree_512_normal.png
+	map_Ka https://github.com/ToskinM/CSE5542_Project/blob/master/Specimen/TexturesCom_BirchTree_512_albedo.png?raw=true
+	map_Kd https://github.com/ToskinM/CSE5542_Project/blob/master/Specimen/TexturesCom_BirchTree_512_albedo.png?raw=true
+	map_refl https://github.com/ToskinM/CSE5542_Project/blob/master/Specimen/TexturesCom_BirchTree_512_roughness.png?raw=true
+	map_bump https://github.com/ToskinM/CSE5542_Project/blob/master/Specimen/TexturesCom_BirchTree_512_normal.png?raw=true
