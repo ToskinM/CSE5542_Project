@@ -1,5 +1,6 @@
 	var scene, camera, renderer, stereoEffect, controls;
 	var ground, roombaCat, catHead, cat, specimen;
+	var cameraHolder;
 	var FOV = 90;
 	var WIDTH, HEIGHT;
 	
@@ -45,7 +46,8 @@
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 		
 		document.body.appendChild(renderer.domElement);
-		document.body.appendChild( WEBVR.createButton( renderer ) );
+
+		document.body.appendChild( WEBVR.createButton( renderer, { frameOfReferenceType: 'eye-level' } ) );
 		renderer.vr.enabled = true;
 		
 		stereoEffect = new THREE.StereoEffect(renderer);
@@ -112,7 +114,7 @@
 		var geometry = new THREE.PlaneGeometry( 2000, 2000, 10, 10 );
 		ground = CreateMeshWithShadows( geometry, groundMaterial );
 		scene.add( ground );
-		translateGlobal(ground, 0, -80, 0);
+		translateGlobal(ground, 0, camera.position.y-80, 0);
 		rotateDegrees(ground, -90, 0, 0);
 		
 		// Load the specimen model and textures
@@ -128,7 +130,7 @@
 						
 						// Position specimen in scene
 						specimen = object
-						specimen.position.set(30, 70, 0);
+						specimen.position.set(30, camera.position.y + 30, 0);
 						specimen.scale.set(0.2, 0.2, 0.2);
 						rotateDegrees(specimen, 90, 180, 0);
 						scene.add(specimen);
@@ -165,7 +167,9 @@
 	// }
 	
 	renderer.setAnimationLoop( function () {
+		specimen.position.set(camera.position.x + 30, camera.position.y + 20, camera.position.z + 20);
 		stereoEffect.render(scene, camera);
+		//renderer.render(scene, camera);
 	} );
 	
 	//====================== Transform Library ======================//
