@@ -33,11 +33,11 @@
 		// Create the scene and set the scene size.
 		scene = new THREE.Scene();
 		scene.background = new THREE.Color( 0x424242 );
-		scene.fog = new THREE.Fog( 0x424242, 0, 300 );
+		scene.fog = new THREE.Fog( 0x424242, 0, 150 );
 		
 		camera = new THREE.PerspectiveCamera(FOV, WIDTH / HEIGHT, 0.001, 700);
-		translateGlobal(camera, 0,40,0);
-		scene.add(camera);
+		//translateGlobal(camera, 0,40,0);
+		//scene.add(camera);
 			
 		// Create a renderer and add it to the DOM, enable shadows.
 		renderer = new THREE.WebGLRenderer({antialias:true});
@@ -80,41 +80,41 @@
 		//scene.add( helper );
 
 		// Setup non-VR controls.	
-		controls = new THREE.OrbitControls(camera, renderer.domElement);
-		controls.target.set(
-			camera.position.x + 0.15,
-			camera.position.y,
-			camera.position.z
-		);
-		controls.enablePan = false;
-		controls.enableZoom = false;
+		// controls = new THREE.OrbitControls(camera, renderer.domElement);
+		// controls.target.set(
+			// camera.position.x + 0.15,
+			// camera.position.y,
+			// camera.position.z
+		// );
+		// controls.enablePan = false;
+		// controls.enableZoom = false;
 		
-		// Setup DeviceOrientation functionality
-		window.addEventListener('deviceorientation', setOrientationControls, true);
-		function setOrientationControls(e) {
-			if (!e.alpha) {
-				// If DeviceOrientation controls cannot be set, return
-				return;
-			}
+		// // Setup DeviceOrientation functionality
+		// window.addEventListener('deviceorientation', setOrientationControls, true);
+		// function setOrientationControls(e) {
+			// if (!e.alpha) {
+				// // If DeviceOrientation controls cannot be set, return
+				// return;
+			// }
 			
-			// If we have a compatable device, replace controlls with VR controls
-			controls = new THREE.DeviceOrientationControls(camera, true);
-			controls.connect();
-			controls.update();
-		}
+			// // If we have a compatable device, replace controlls with VR controls
+			// controls = new THREE.DeviceOrientationControls(camera, true);
+			// controls.connect();
+			// controls.update();
+		// }
 		
-		// Allow fullscreen on screen click
-		//renderer.domElement.addEventListener('click', fullscreen, false);
-		window.removeEventListener('deviceorientation', setOrientationControls, true);
+		// // Allow fullscreen on screen click
+		// //renderer.domElement.addEventListener('click', fullscreen, false);
+		// window.removeEventListener('deviceorientation', setOrientationControls, true);
 	}
 	
 	function createSpecimen() {	
 		// ground
-		var groundMaterial = new THREE.MeshLambertMaterial ( { color: 0x212121 } );
+		var groundMaterial = new THREE.MeshLambertMaterial ( { color: 0xffffff } );
 		var geometry = new THREE.PlaneGeometry( 2000, 2000, 10, 10 );
 		ground = CreateMeshWithShadows( geometry, groundMaterial );
 		scene.add( ground );
-		translateGlobal(ground, 0, camera.position.y-80, 0);
+		translateGlobal(ground, 0, -80, 0);
 		rotateDegrees(ground, -90, 0, 0);
 		
 		// Load the specimen model and textures
@@ -130,7 +130,7 @@
 						
 						// Position specimen in scene
 						specimen = object
-						specimen.position.set(30, camera.position.y + 30, 0);
+						specimen.position.set(0, 30, -40);
 						specimen.scale.set(0.2, 0.2, 0.2);
 						rotateDegrees(specimen, 90, 180, 0);
 						scene.add(specimen);
@@ -167,9 +167,9 @@
 	// }
 	
 	renderer.setAnimationLoop( function () {
-		specimen.position.set(camera.position.x + 30, camera.position.y + 20, camera.position.z + 20);
-		stereoEffect.render(scene, camera);
-		//renderer.render(scene, camera);
+		//specimen.position.set(camera.position.x, camera.position.y + 20, camera.position.z + 50);
+		//stereoEffect.render(scene, camera);
+		renderer.render(scene, camera);
 	} );
 	
 	//====================== Transform Library ======================//
