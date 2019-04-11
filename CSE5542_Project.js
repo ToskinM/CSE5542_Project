@@ -182,12 +182,18 @@ var scene, camera, renderer, stereoEffect, controls;
 	};
 
 	var rotCtrl = new RotationCtrl();
-	var gui = new dat.GUI();
+	//var gui = new dat.GUI();
+	var gui = new dat.GUIVR.create('Rotation Control');
 	gui.add(rotCtrl, 'XRotation', 0, 2);
 	gui.add(rotCtrl, 'YRotation', 0, 2);
 	gui.add(rotCtrl, 'ZRotation', 0, 2);
 	gui.add(rotCtrl, 'stop');
-
+	gui.position.set(8, 15, -20);
+	gui.scale.set(20,20,20);
+	scene.add(gui);
+	var gazeInput = dat.GUIVR.addInputObject( camera );
+	scene.add( gazeInput.cursor );
+	dat.GUIVR.enableMouse( camera, renderer );
 
 	renderer.setAnimationLoop( function () {
 		//specimen.position.set(camera.position.x, camera.position.y + 20, camera.position.z + 50);
