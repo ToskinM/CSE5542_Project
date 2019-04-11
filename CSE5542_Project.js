@@ -4,6 +4,17 @@
 	var FOV = 90;
 	var WIDTH, HEIGHT;
 	
+	var raycaster, arrow;
+	var clock;
+	var hotspots;
+	var hotspotTriggered = false;
+	var specimenGroup;
+	
+	var hotspotDictionary = {
+		"hotspot1": "Cuza da whey it iz.",
+		"hotspot2": "Ain't that just the way?",
+	};
+	
 	var assetPath = "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
 	var proxyPath = "https://cors-anywhere.herokuapp.com/";
 	
@@ -26,6 +37,9 @@
 		}
 		
 		specimen = new THREE.Object3D();
+		clock = new THREE.Clock();
+		hotspots = [];
+		specimenGroup = new THREE.Group();
 	
 		WIDTH = window.innerWidth * 0.98;
 		HEIGHT = window.innerHeight * 0.975;
@@ -52,6 +66,11 @@
 		
 		stereoEffect = new THREE.StereoEffect(renderer);
 		stereoEffect.setSize( WIDTH, HEIGHT );
+		
+		// add raycaster
+		raycaster = new THREE.Raycaster();
+		arrow = new THREE.ArrowHelper( raycaster.ray.direction, raycaster.ray.origin, 100, Math.random() * 0xffffff );
+		//scene.add( arrow );
 		
 		// Create an event listener that resizes the renderer with the browser window and updates camera aspects.
 		window.addEventListener('resize', function() {
@@ -80,32 +99,32 @@
 		//scene.add( helper );
 
 		// Setup non-VR controls.	
-		// controls = new THREE.OrbitControls(camera, renderer.domElement);
-		// controls.target.set(
-			// camera.position.x + 0.15,
-			// camera.position.y,
-			// camera.position.z
-		// );
-		// controls.enablePan = false;
-		// controls.enableZoom = false;
+		controls = new THREE.OrbitControls(camera, renderer.domElement);
+		controls.target.set(
+			camera.position.x + 0.15,
+			camera.position.y,
+			camera.position.z
+		);
+		controls.enablePan = false;
+		controls.enableZoom = false;
 		
-		// // Setup DeviceOrientation functionality
-		// window.addEventListener('deviceorientation', setOrientationControls, true);
-		// function setOrientationControls(e) {
-			// if (!e.alpha) {
-				// // If DeviceOrientation controls cannot be set, return
-				// return;
-			// }
+		// Setup DeviceOrientation functionality
+		window.addEventListener('deviceorientation', setOrientationControls, true);
+		function setOrientationControls(e) {
+			if (!e.alpha) {
+				// If DeviceOrientation controls cannot be set, return
+				return;
+			}
 			
-			// // If we have a compatable device, replace controlls with VR controls
-			// controls = new THREE.DeviceOrientationControls(camera, true);
-			// controls.connect();
-			// controls.update();
-		// }
+			// If we have a compatable device, replace controlls with VR controls
+			controls = new THREE.DeviceOrientationControls(camera, true);
+			controls.connect();
+			controls.update();
+		}
 		
-		// // Allow fullscreen on screen click
-		// //renderer.domElement.addEventListener('click', fullscreen, false);
-		// window.removeEventListener('deviceorientation', setOrientationControls, true);
+		// Allow fullscreen on screen click
+		//renderer.domElement.addEventListener('click', fullscreen, false);
+		window.removeEventListener('deviceorientation', setOrientationControls, true);
 	}
 	
 	function createSpecimen() {	
@@ -113,6 +132,7 @@
 		var groundMaterial = new THREE.MeshLambertMaterial ( { color: 0xffffff } );
 		var geometry = new THREE.PlaneGeometry( 2000, 2000, 10, 10 );
 		ground = CreateMeshWithShadows( geometry, groundMaterial );
+		ground.name = 'ground';
 		scene.add( ground );
 		translateGlobal(ground, 0, -80, 0);
 		rotateDegrees(ground, -90, 0, 0);
@@ -130,10 +150,13 @@
 						
 						// Position specimen in scene
 						specimen = object
-						specimen.position.set(0, -20, -40);
+						specimen.name = 'specimen';
+						specimen.position.set(0, 0, 0);
 						specimen.scale.set(0.2, 0.2, 0.2);
 						rotateDegrees(specimen, 90, 0, 0);
 						scene.add(specimen);
+						
+						addHotspots();
 						
 					}, onLoadOBJ, onProgressOBJ );
 		}, onProgressMTL );
@@ -157,20 +180,89 @@
 		}
 	}
 	
-	// Renders the scene and updates the render as needed.
-	// function animate() {
-		// requestAnimationFrame(animate);
-
-		// //rotateDegrees(specimen, 0, 0, 1);
-
-		// stereoEffect.render(scene, camera);
-	// }
+	function addHotspots(){
+		// Add first hotspot
+		var sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
+		var sphereMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide});
+		var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+		sphere.name = 'hotspot1';
+		sphere.position.set(specimen.position.x - 2, specimen.position.y + 40, specimen.position.z - 5);
+		scene.add(sphere);
+		hotspots.push(sphere);
+		
+		// Add second hotspot
+		var sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
+		var sphereMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide});
+		var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+		sphere.name = 'hotspot2';
+		sphere.position.set(specimen.position.x + 2, specimen.position.y + 10, specimen.position.z + 10);
+		scene.add(sphere);
+		hotspots.push(sphere);
+		
+		// Group together the specimen and out hotspots, so they're 'points' on the specimen
+		specimenGroup.position.set(0, -20, -40);
+		specimenGroup.add(specimen)
+		specimenGroup.add(hotspots[0])
+		specimenGroup.add(hotspots[1])
+		scene.add(specimenGroup);
+		
+		renderer.setAnimationLoop(animate);
+	}
 	
-	renderer.setAnimationLoop( function () {
-		//specimen.position.set(camera.position.x, camera.position.y + 20, camera.position.z + 50);
-		//stereoEffect.render(scene, camera);
-		renderer.render(scene, camera);
-	} );
+	function animate(){
+		// Rotate our specimen
+		rotateDegrees(specimenGroup, 0, 1, 0);
+		
+		// update the position of arrow
+		arrow.setDirection(raycaster.ray.direction);
+		 
+		// update the raycaster
+		var worldPos = new THREE.Vector3();
+		var worldDir = new THREE.Vector3();
+		worldPos = camera.getWorldPosition(worldPos)
+		worldDir = camera.getWorldDirection(worldDir)
+		raycaster.set(worldPos, worldDir);
+		
+		// test intersection with all hotspots.
+		var intersects = raycaster.intersectObjects(hotspots);
+		if (intersects.length > 0) {
+			console.log('Looking at: ' + intersects[0].object.name);
+			
+			// Start clock to see how long this hotspot is being looked at
+			if (!clock.running) clock.start();
+			
+			// make the hotspot pulse
+			var delta = clock.getElapsedTime();
+			var scale = Math.abs(Math.sin(delta/1*Math.PI)) * 1.5;
+			if (scale < 1) {
+				scale = 1;
+			}
+			intersects[0].object.scale.set(scale, scale, scale);
+
+			// If the hotspot is looked at for 0.5 seconds, trigger UI update
+			if (!hotspotTriggered && clock.getElapsedTime() > 0.5) {
+				hotspotTriggered = true;
+				
+				// UI update
+				console.log(hotspotDictionary[intersects[0].object.name]);
+			}
+
+		} else {
+			hotspotTriggered = false;
+			
+			// If no hotspots are being looked at, reset the clock
+			clock.stop();
+			
+			// Reset size of hotspots
+			for (var i = 0; i < scene.children.length; i ++) {
+				hotspots[0].scale.set(1,1,1);
+				hotspots[1].scale.set(1,1,1);
+			}
+		}
+		
+		//renderer.render(scene, camera);
+		stereoEffect.render(scene, camera);
+	}
 	
 	//====================== Transform Library ======================//
 	
