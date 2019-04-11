@@ -98,15 +98,15 @@
 		//var helper = new THREE.CameraHelper( light.shadow.camera );
 		//scene.add( helper );
 
-		// Setup non-VR controls.	
-		controls = new THREE.OrbitControls(camera, renderer.domElement);
-		controls.target.set(
-			camera.position.x + 0.15,
-			camera.position.y,
-			camera.position.z
-		);
-		controls.enablePan = false;
-		controls.enableZoom = false;
+		//Setup non-VR controls.
+		// controls = new THREE.OrbitControls(camera, renderer.domElement);
+		// controls.target.set(
+			// camera.position.x + 0.15,
+			// camera.position.y,
+			// camera.position.z
+		// );
+		// controls.enablePan = false;
+		// controls.enableZoom = false;
 		
 		// Setup DeviceOrientation functionality
 		window.addEventListener('deviceorientation', setOrientationControls, true);
@@ -122,11 +122,20 @@
 			controls.update();
 		}
 		
-		// Allow fullscreen on screen click
-		//renderer.domElement.addEventListener('click', fullscreen, false);
-		window.removeEventListener('deviceorientation', setOrientationControls, true);
+		// // Allow fullscreen on screen click
+		// //renderer.domElement.addEventListener('click', fullscreen, false);
+		// window.removeEventListener('deviceorientation', setOrientationControls, true);
+
+		//gui
+		//var gui = new dat.GUI();
+
 	}
 	
+
+
+
+
+
 	function createSpecimen() {	
 		// ground
 		var groundMaterial = new THREE.MeshLambertMaterial ( { color: 0xffffff } );
@@ -198,31 +207,72 @@
 		sphere.position.set(specimen.position.x + 2, specimen.position.y + 10, specimen.position.z + 10);
 		scene.add(sphere);
 		hotspots.push(sphere);
-		
+
 		// Group together the specimen and out hotspots, so they're 'points' on the specimen
 		specimenGroup.position.set(0, -20, -40);
 		specimenGroup.add(specimen)
 		specimenGroup.add(hotspots[0])
 		specimenGroup.add(hotspots[1])
 		scene.add(specimenGroup);
-		
+
+		// stereoEffect.render(scene, camera);
+	// }
+	// var RotationCtrl = function() {
+	// 	this.XRotation = 0.01;
+	// 	this.YRotation = 0.2;
+	// 	this.ZRotation = 0.2;
+	// 	this.stop = false;
+	// 	this.Text = false;
+	// };
+	//
+	// var rotCtrl = new RotationCtrl();
+	// //var gui = new dat.GUI();
+	// var gui = new dat.GUIVR.create('Rotation Control');
+	// gui.add(rotCtrl, 'XRotation', 0, 2);
+	// gui.add(rotCtrl, 'YRotation', 0, 2);
+	// gui.add(rotCtrl, 'ZRotation', 0, 2);
+	// gui.add(rotCtrl, 'stop');
+	// gui.add(rotCtrl, 'Text');
+	// gui.position.set(1, 2, -3);
+	// gui.scale.set(3,3,3);
+	// scene.add(gui);
+	// var gazeInput = dat.GUIVR.addInputObject( camera );
+	// scene.add( gazeInput.cursor );
 		renderer.setAnimationLoop(animate);
 	}
 	
+function changeParagraphText(text)
+{
+	document.getElementById("info").innerHTML = "<p><font color=\"white\">"+text+"</font></p>";
+
+}
+
+function changeHeaderText(text)
+{
+	document.getElementById("header").innerHTML = "<p><font color=\"white\" size = \"6\">"+text+"</font></p>";
+
+}
+
+
+	renderer.setAnimationLoop( function () {
+		//specimen.position.set(camera.position.x, camera.position.y + 20, camera.position.z + 50);
+		//stereoEffect.render(scene, camera);
+		renderer.render(scene, camera);
+	} );
 	function animate(){
 		// Rotate our specimen
 		rotateDegrees(specimenGroup, 0, 1, 0);
-		
+	
 		// update the position of arrow
 		arrow.setDirection(raycaster.ray.direction);
-		 
+
 		// update the raycaster
 		var worldPos = new THREE.Vector3();
 		var worldDir = new THREE.Vector3();
 		worldPos = camera.getWorldPosition(worldPos)
 		worldDir = camera.getWorldDirection(worldDir)
 		raycaster.set(worldPos, worldDir);
-		
+
 		// test intersection with all hotspots.
 		var intersects = raycaster.intersectObjects(hotspots);
 		if (intersects.length > 0) {
@@ -311,7 +361,3 @@
 		mesh.receiveShadow = true; 
 		return mesh;
 	}
-	
-
-	
-	
