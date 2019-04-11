@@ -11,12 +11,15 @@
 	var specimenGroup;
 	
 	var hotspotDictionary = {
-		"hotspot1": "Cuza da whey it iz.",
-		"hotspot2": "Ain't that just the way?",
+		"Classification": "Family: Betulaceae<br />Genus: Betula",
+		"Habitat": "Deciduous trees<br />Northern Hemisphere<br />Temperate and Boreal climates",
 	};
 	
 	var assetPath = "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
 	var proxyPath = "https://cors-anywhere.herokuapp.com/";
+	
+	var statsVR;
+	var title, description;
 	
 	// Website: https://cse5542projectwlmt.weebly.com
 	
@@ -98,7 +101,7 @@
 		//var helper = new THREE.CameraHelper( light.shadow.camera );
 		//scene.add( helper );
 
-		//Setup non-VR controls.
+		// //Setup non-VR controls.
 		// controls = new THREE.OrbitControls(camera, renderer.domElement);
 		// controls.target.set(
 			// camera.position.x + 0.15,
@@ -108,33 +111,30 @@
 		// controls.enablePan = false;
 		// controls.enableZoom = false;
 		
-		// Setup DeviceOrientation functionality
-		window.addEventListener('deviceorientation', setOrientationControls, true);
-		function setOrientationControls(e) {
-			if (!e.alpha) {
-				// If DeviceOrientation controls cannot be set, return
-				return;
-			}
+		// // Setup DeviceOrientation functionality
+		// window.addEventListener('deviceorientation', setOrientationControls, true);
+		// function setOrientationControls(e) {
+			// if (!e.alpha) {
+				// // If DeviceOrientation controls cannot be set, return
+				// return;
+			// }
 			
-			// If we have a compatable device, replace controlls with VR controls
-			controls = new THREE.DeviceOrientationControls(camera, true);
-			controls.connect();
-			controls.update();
-		}
+			// // If we have a compatable device, replace controlls with VR controls
+			// controls = new THREE.DeviceOrientationControls(camera, true);
+			// controls.connect();
+			// controls.update();
+		// }
 		
 		// // Allow fullscreen on screen click
 		// //renderer.domElement.addEventListener('click', fullscreen, false);
-		// window.removeEventListener('deviceorientation', setOrientationControls, true);
+		 // window.removeEventListener('deviceorientation', setOrientationControls, true);
 
 		//gui
 		//var gui = new dat.GUI();
 
+		statsVR = new StatsVR(scene, camera);
+		statsVR.setZ(-20);
 	}
-	
-
-
-
-
 
 	function createSpecimen() {	
 		// ground
@@ -194,7 +194,7 @@
 		var sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
 		var sphereMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide});
 		var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-		sphere.name = 'hotspot1';
+		sphere.name = 'Classification';
 		sphere.position.set(specimen.position.x - 2, specimen.position.y + 40, specimen.position.z - 5);
 		scene.add(sphere);
 		hotspots.push(sphere);
@@ -203,7 +203,7 @@
 		var sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
 		var sphereMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide});
 		var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-		sphere.name = 'hotspot2';
+		sphere.name = 'Habitat';
 		sphere.position.set(specimen.position.x + 2, specimen.position.y + 10, specimen.position.z + 10);
 		scene.add(sphere);
 		hotspots.push(sphere);
@@ -215,8 +215,9 @@
 		specimenGroup.add(hotspots[1])
 		scene.add(specimenGroup);
 
-		// stereoEffect.render(scene, camera);
-	// }
+		renderer.setAnimationLoop(animate);
+	}
+	
 	// var RotationCtrl = function() {
 	// 	this.XRotation = 0.01;
 	// 	this.YRotation = 0.2;
@@ -238,28 +239,22 @@
 	// scene.add(gui);
 	// var gazeInput = dat.GUIVR.addInputObject( camera );
 	// scene.add( gazeInput.cursor );
-		renderer.setAnimationLoop(animate);
-	}
 	
-function changeParagraphText(text)
-{
-	document.getElementById("info").innerHTML = "<p><font color=\"white\">"+text+"</font></p>";
+	function changeParagraphText(text)
+	{
+		document.getElementById("info").innerHTML = "<p><font color=\"white\">"+text+"</font></p>";
+		title = text;
+	}
 
-}
+	function changeHeaderText(text)
+	{
+		document.getElementById("header").innerHTML = "<p><font color=\"white\" size = \"6\">"+text+"</font></p>";
+		description = text;
+	}
 
-function changeHeaderText(text)
-{
-	document.getElementById("header").innerHTML = "<p><font color=\"white\" size = \"6\">"+text+"</font></p>";
-
-}
-
-
-	renderer.setAnimationLoop( function () {
-		//specimen.position.set(camera.position.x, camera.position.y + 20, camera.position.z + 50);
-		//stereoEffect.render(scene, camera);
-		renderer.render(scene, camera);
-	} );
 	function animate(){
+		statsVR.msStart();
+		
 		// Rotate our specimen
 		rotateDegrees(specimenGroup, 0, 1, 0);
 	
@@ -295,6 +290,9 @@ function changeHeaderText(text)
 				
 				// UI update
 				console.log(hotspotDictionary[intersects[0].object.name]);
+				
+				changeParagraphText(hotspotDictionary[intersects[0].object.name])
+				changeHeaderText(intersects[0].object.name)
 			}
 
 		} else {
@@ -310,8 +308,14 @@ function changeHeaderText(text)
 			}
 		}
 		
-		//renderer.render(scene, camera);
-		stereoEffect.render(scene, camera);
+		statsVR.setCustom1(title);
+		statsVR.setCustom2(description);
+		statsVR.update();
+		
+		statsVR.msEnd();
+		
+		//stereoEffect.render(scene, camera);
+		renderer.render(scene, camera);
 	}
 	
 	//====================== Transform Library ======================//
