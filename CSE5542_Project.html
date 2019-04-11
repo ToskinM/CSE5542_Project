@@ -2,6 +2,60 @@
 <!doctype html>
 <html>
 	<body>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				font-family: Monospace;
+				background-color: #000;
+				margin: 0px;
+				overflow: hidden;
+			}
+			#header {
+				position: fixed;
+				top: 0;
+			  left: 0;
+			  width: 300px;
+			}
+			#header p {
+				max-width: 600px;
+				margin-left: auto;
+				margin-right: auto;
+				padding: 0 2em;
+			}
+			#info {
+				position: fixed;
+				top: 40;
+			  left: 0;
+			  width: 300px;
+			}
+			#info p {
+				max-width: 600px;
+				margin-left: auto;
+				margin-right: auto;
+				padding: 0 2em;
+			}
+
+			.dg.ac {
+				z-index: 999 !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="header">
+			<p><font color="white" size="6">
+				I'm a header
+			</font></p>
+	 		</div>
+		<div id="info">
+			<p><font color="white">
+				This is a birch tree. Ain't it perty. I can't see any textures on my laptop, but oh well.
+				This is informational, right?
+			</font></p>
+	 		</div>
+
+
 		<!–– Three.js libraries ––>
 		<script src="https://cse5542projectwlmt.weebly.com/files/theme/Three_js/three.min.js"></script>
 		<script src="https://cse5542projectwlmt.weebly.com/files/theme/Three_js/StereoEffect.js"></script>

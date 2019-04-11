@@ -174,34 +174,48 @@ var scene, camera, renderer, stereoEffect, controls;
 
 		// stereoEffect.render(scene, camera);
 	// }
-	var RotationCtrl = function() {
-		this.XRotation = 0;
-		this.YRotation = 0.2;
-		this.ZRotation = 0.2;
-		this.stop = false;
-	};
+	// var RotationCtrl = function() {
+	// 	this.XRotation = 0.01;
+	// 	this.YRotation = 0.2;
+	// 	this.ZRotation = 0.2;
+	// 	this.stop = false;
+	// 	this.Text = false;
+	// };
+	//
+	// var rotCtrl = new RotationCtrl();
+	// //var gui = new dat.GUI();
+	// var gui = new dat.GUIVR.create('Rotation Control');
+	// gui.add(rotCtrl, 'XRotation', 0, 2);
+	// gui.add(rotCtrl, 'YRotation', 0, 2);
+	// gui.add(rotCtrl, 'ZRotation', 0, 2);
+	// gui.add(rotCtrl, 'stop');
+	// gui.add(rotCtrl, 'Text');
+	// gui.position.set(1, 2, -3);
+	// gui.scale.set(3,3,3);
+	// scene.add(gui);
+	// var gazeInput = dat.GUIVR.addInputObject( camera );
+	// scene.add( gazeInput.cursor );
 
-	var rotCtrl = new RotationCtrl();
-	//var gui = new dat.GUI();
-	var gui = new dat.GUIVR.create('Rotation Control');
-	gui.add(rotCtrl, 'XRotation', 0, 2);
-	gui.add(rotCtrl, 'YRotation', 0, 2);
-	gui.add(rotCtrl, 'ZRotation', 0, 2);
-	gui.add(rotCtrl, 'stop');
-	gui.position.set(8, 15, -20);
-	gui.scale.set(20,20,20);
-	scene.add(gui);
-	var gazeInput = dat.GUIVR.addInputObject( camera );
-	scene.add( gazeInput.cursor );
-	dat.GUIVR.enableMouse( camera, renderer );
+function changeParagraphText(text)
+{
+	document.getElementById("info").innerHTML = "<p><font color=\"white\">"+text+"</font></p>";
+
+}
+
+function changeHeaderText(text)
+{
+	document.getElementById("header").innerHTML = "<p><font color=\"white\" size = \"6\">"+text+"</font></p>";
+
+}
+
 
 	renderer.setAnimationLoop( function () {
 		//specimen.position.set(camera.position.x, camera.position.y + 20, camera.position.z + 50);
 		//stereoEffect.render(scene, camera);
 		renderer.render(scene, camera);
-		if(!rotCtrl.stop)
-			rotateDegrees(specimen,rotCtrl.XRotation,rotCtrl.YRotation,rotCtrl.ZRotation);
 	} );
+
+
 
 	//====================== Transform Library ======================//
 
