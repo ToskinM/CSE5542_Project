@@ -12,7 +12,7 @@
 	// Set this to true to get models to load when testing locally.
 	// SET TO FALSE BEFORE UPLOADING TO WEBSITE OR PUSHING
 	// If you get a CORS Policy error, its probably this
-	var runningLocally = false;
+	var runningLocally = true;
 			
 	init();
 	//createRoombaCat();
@@ -130,9 +130,9 @@
 						
 						// Position specimen in scene
 						specimen = object
-						specimen.position.set(0, 30, -40);
+						specimen.position.set(0, -20, -40);
 						specimen.scale.set(0.2, 0.2, 0.2);
-						rotateDegrees(specimen, 90, 180, 0);
+						rotateDegrees(specimen, 90, 0, 0);
 						scene.add(specimen);
 						
 					}, onLoadOBJ, onProgressOBJ );
