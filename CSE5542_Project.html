@@ -35,14 +35,25 @@
 				margin-right: auto;
 				padding: 0 2em;
 			}
+			#title {
+				position: absolute;
+				bottom: 0;
+    		left: 50%;
+				transform: translate(-50%, -50%)
+			}
+			#title p {
+				max-width: 600px;
+				margin-left: auto;
+				margin-right: auto;
+				padding: 0 2em;
+			}
 
 			.dg.ac {
 				z-index: 999 !important;
 			}
 		</style>
-	</head>
-
 	<body>
+
 		<div id="header">
 			<p><font color="white" size="6">
 				I'm a header
@@ -54,7 +65,11 @@
 				This is informational, right?
 			</font></p>
 	 		</div>
-
+			<div id="title">
+				<p><font color="white"size="20">
+					Birch Tree
+				</font></p>
+				</div>
 
 		<!–– Three.js libraries ––>
 		<script src="https://cse5542projectwlmt.weebly.com/files/theme/Three_js/three.min.js"></script>
