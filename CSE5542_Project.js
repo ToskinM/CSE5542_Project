@@ -27,8 +27,8 @@ var scene, camera, renderer, stereoEffect, controls;
 
 		specimen = new THREE.Object3D();
 
-		WIDTH = window.innerWidth;
-		HEIGHT = window.innerHeight;
+		WIDTH = window.innerWidth * 0.98;
+		HEIGHT = window.innerHeight * 0.975;
 
 		// Create the scene and set the scene size.
 		scene = new THREE.Scene();
@@ -55,8 +55,8 @@ var scene, camera, renderer, stereoEffect, controls;
 
 		// Create an event listener that resizes the renderer with the browser window and updates camera aspects.
 		window.addEventListener('resize', function() {
-			WIDTH = window.innerWidth;
-			HEIGHT = window.innerHeight;
+			WIDTH = window.innerWidth * 0.98;
+			HEIGHT = window.innerHeight * 0.975;
 
 			camera.aspect = WIDTH / HEIGHT
 
@@ -139,9 +139,9 @@ var scene, camera, renderer, stereoEffect, controls;
 
 						// Position specimen in scene
 						specimen = object
-						specimen.position.set(0, 30, -40);
+						specimen.position.set(0, -20, -40);
 						specimen.scale.set(0.2, 0.2, 0.2);
-						rotateDegrees(specimen, 90, 180, 0);
+						rotateDegrees(specimen, 90, 0, 0);
 						scene.add(specimen);
 
 					}, onLoadOBJ, onProgressOBJ );
