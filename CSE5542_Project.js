@@ -27,8 +27,8 @@
 		
 		specimen = new THREE.Object3D();
 	
-		WIDTH = window.innerWidth;
-		HEIGHT = window.innerHeight;
+		WIDTH = window.innerWidth * 0.98;
+		HEIGHT = window.innerHeight * 0.975;
 			
 		// Create the scene and set the scene size.
 		scene = new THREE.Scene();
@@ -55,8 +55,8 @@
 		
 		// Create an event listener that resizes the renderer with the browser window and updates camera aspects.
 		window.addEventListener('resize', function() {
-			WIDTH = window.innerWidth;
-			HEIGHT = window.innerHeight;
+			WIDTH = window.innerWidth * 0.98;
+			HEIGHT = window.innerHeight * 0.975;
 			
 			camera.aspect = WIDTH / HEIGHT
 			
