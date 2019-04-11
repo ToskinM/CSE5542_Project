@@ -1,94 +1,94 @@
-	var scene, camera, renderer, stereoEffect, controls;
+var scene, camera, renderer, stereoEffect, controls;
 	var ground, roombaCat, catHead, cat, specimen;
 	var cameraHolder;
 	var FOV = 90;
 	var WIDTH, HEIGHT;
-	
+
 	var assetPath = "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
 	var proxyPath = "https://cors-anywhere.herokuapp.com/";
-	
+
 	// Website: https://cse5542projectwlmt.weebly.com
-	
+
 	// Set this to true to get models to load when testing locally.
 	// SET TO FALSE BEFORE UPLOADING TO WEBSITE OR PUSHING
 	// If you get a CORS Policy error, its probably this
-	var runningLocally = false;
-			
+	var runningLocally = true;
+
 	init();
 	//createRoombaCat();
 	createSpecimen();
 	//animate();
-	
+
 	// Sets up the scene
     function init() {
 		if (runningLocally){
 			assetPath = proxyPath + "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
 		}
-		
+
 		specimen = new THREE.Object3D();
-	
+
 		WIDTH = window.innerWidth;
 		HEIGHT = window.innerHeight;
-			
+
 		// Create the scene and set the scene size.
 		scene = new THREE.Scene();
 		scene.background = new THREE.Color( 0x424242 );
 		scene.fog = new THREE.Fog( 0x424242, 0, 150 );
-		
+
 		camera = new THREE.PerspectiveCamera(FOV, WIDTH / HEIGHT, 0.001, 700);
 		//translateGlobal(camera, 0,40,0);
 		//scene.add(camera);
-			
+
 		// Create a renderer and add it to the DOM, enable shadows.
 		renderer = new THREE.WebGLRenderer({antialias:true});
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.shadowMap.enabled = true;
 		renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-		
+
 		document.body.appendChild(renderer.domElement);
 
 		document.body.appendChild( WEBVR.createButton( renderer, { frameOfReferenceType: 'eye-level' } ) );
 		renderer.vr.enabled = true;
-		
+
 		stereoEffect = new THREE.StereoEffect(renderer);
 		stereoEffect.setSize( WIDTH, HEIGHT );
-		
+
 		// Create an event listener that resizes the renderer with the browser window and updates camera aspects.
 		window.addEventListener('resize', function() {
 			WIDTH = window.innerWidth;
 			HEIGHT = window.innerHeight;
-			
+
 			camera.aspect = WIDTH / HEIGHT
-			
+
 			camera.updateProjectionMatrix();
-			
+
 			stereoEffect.setSize( WIDTH, HEIGHT );
 		});
-		
+
 	    // Create a light, set its position, and add it to the scene.
 		var light = new THREE.PointLight( 0xefebd8, 4, 100 );
 		light.position.set(0,50,0);
 		light.castShadow = true;
 		scene.add(light);
-		
+
 		// Create directional light to light whole scene a bit
 		var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.7 );
 		light.castShadow = true;
 		scene.add( directionalLight );
-		
+
 		//var helper = new THREE.CameraHelper( light.shadow.camera );
 		//scene.add( helper );
 
-		// Setup non-VR controls.	
+		//Setup non-VR controls.
 		// controls = new THREE.OrbitControls(camera, renderer.domElement);
 		// controls.target.set(
-			// camera.position.x + 0.15,
-			// camera.position.y,
-			// camera.position.z
+		// 	camera.position.x + 0.15,
+		// 	camera.position.y,
+		// 	camera.position.z
 		// );
 		// controls.enablePan = false;
 		// controls.enableZoom = false;
-		
+
 		// // Setup DeviceOrientation functionality
 		// window.addEventListener('deviceorientation', setOrientationControls, true);
 		// function setOrientationControls(e) {
@@ -96,19 +96,28 @@
 				// // If DeviceOrientation controls cannot be set, return
 				// return;
 			// }
-			
+
 			// // If we have a compatable device, replace controlls with VR controls
 			// controls = new THREE.DeviceOrientationControls(camera, true);
 			// controls.connect();
 			// controls.update();
 		// }
-		
+
 		// // Allow fullscreen on screen click
 		// //renderer.domElement.addEventListener('click', fullscreen, false);
 		// window.removeEventListener('deviceorientation', setOrientationControls, true);
+
+		//gui
+		//var gui = new dat.GUI();
+
 	}
-	
-	function createSpecimen() {	
+
+
+
+
+
+
+	function createSpecimen() {
 		// ground
 		var groundMaterial = new THREE.MeshLambertMaterial ( { color: 0xffffff } );
 		var geometry = new THREE.PlaneGeometry( 2000, 2000, 10, 10 );
@@ -116,7 +125,7 @@
 		scene.add( ground );
 		translateGlobal(ground, 0, -80, 0);
 		rotateDegrees(ground, -90, 0, 0);
-		
+
 		// Load the specimen model and textures
 		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
 		new THREE.MTLLoader()
@@ -127,14 +136,14 @@
 					.setMaterials( materials )
 					.setPath( assetPath )
 					.load( 'TexturesCom_BirchTree_lp.obj', function ( object ) {
-						
+
 						// Position specimen in scene
 						specimen = object
 						specimen.position.set(0, 30, -40);
 						specimen.scale.set(0.2, 0.2, 0.2);
 						rotateDegrees(specimen, 90, 180, 0);
 						scene.add(specimen);
-						
+
 					}, onLoadOBJ, onProgressOBJ );
 		}, onProgressMTL );
 	}
@@ -156,7 +165,7 @@
 			console.log( 'Material ' + Math.round( percentComplete, 2 ) + '% downloaded' );
 		}
 	}
-	
+
 	// Renders the scene and updates the render as needed.
 	// function animate() {
 		// requestAnimationFrame(animate);
@@ -165,15 +174,31 @@
 
 		// stereoEffect.render(scene, camera);
 	// }
-	
+	var RotationCtrl = function() {
+		this.XRotation = 0;
+		this.YRotation = 0.2;
+		this.ZRotation = 0.2;
+		this.stop = false;
+	};
+
+	var rotCtrl = new RotationCtrl();
+	var gui = new dat.GUI();
+	gui.add(rotCtrl, 'XRotation', 0, 2);
+	gui.add(rotCtrl, 'YRotation', 0, 2);
+	gui.add(rotCtrl, 'ZRotation', 0, 2);
+	gui.add(rotCtrl, 'stop');
+
+
 	renderer.setAnimationLoop( function () {
 		//specimen.position.set(camera.position.x, camera.position.y + 20, camera.position.z + 50);
 		//stereoEffect.render(scene, camera);
 		renderer.render(scene, camera);
+		if(!rotCtrl.stop)
+			rotateDegrees(specimen,rotCtrl.XRotation,rotCtrl.YRotation,rotCtrl.ZRotation);
 	} );
-	
+
 	//====================== Transform Library ======================//
-	
+
 	// Not quite sure how to get prototypes working
 	// THREE.Object3D.prototype.translateBy = function(dx, dy, dy){
 		// var x = this.position.x + dx;
@@ -181,7 +206,7 @@
 		// var z = this.position.z + dz;
 		// this.position.set(x, y, z);
 	// }
-	
+
 	function translateGlobal(object3D, dx, dy, dz) {
 		var x = object3D.position.x + dx;
 		var y = object3D.position.y + dy;
@@ -193,7 +218,7 @@
 		object3D.translateY(dy);
 		object3D.translateZ(dz);
 	}
-	
+
 	function rotateDegrees(object3D, degX, degY, degZ) {
 		object3D.rotateX(degX * (Math.PI / 180));
 		object3D.rotateY(degY * (Math.PI / 180));
@@ -204,22 +229,18 @@
 		object3D.rotateY(radY);
 		object3D.rotateZ(radZ);
 	}
-	
+
 	function scale(object3D, dx, dy, dz) {
 		var x = object3D.scale.x * dx;
 		var y = object3D.scale.y * dy;
 		var z = object3D.scale.z * dz;
 		object3D.scale.set(x, y, z);
 	}
-	
+
 	//====================== 3D Object Creation Library ======================//
 	function CreateMeshWithShadows( geometry, material ) {
 		var mesh = new THREE.Mesh( geometry, material );
 		mesh.castShadow = true;
-		mesh.receiveShadow = true; 
+		mesh.receiveShadow = true;
 		return mesh;
 	}
-	
-
-	
-	
