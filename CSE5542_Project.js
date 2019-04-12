@@ -280,16 +280,16 @@
 	
 	function changeParagraphText(text)
 	{
-		document.getElementById("info").innerHTML = "<p><font color=\"white\">"+text+"</font></p>";
-		title = text;
+		//document.getElementById("info").innerHTML = "<p><font color=\"white\">"+text+"</font></p>";
+		//title = text;
 		
 		hotspotHUD.material = text;
 	}
 
 	function changeHeaderText(text)
 	{
-		document.getElementById("header").innerHTML = "<p><font color=\"white\" size = \"6\">"+text+"</font></p>";
-		description = text;
+		//document.getElementById("header").innerHTML = "<p><font color=\"white\" size = \"6\">"+text+"</font></p>";
+		//description = text;
 		
 		hudRight.material = text;
 	}
