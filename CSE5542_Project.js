@@ -8,7 +8,8 @@
 	var clock;
 	var hotspots;
 	var hotspotTriggered = false;
-	var specimenGroup;
+	var specimenGroup, hudGroup;
+	var hud;
 	
 	var hotspotDictionary = {
 		"Classification": "Family: Betulaceae<br />Genus: Betula",
@@ -18,7 +19,6 @@
 	var assetPath = "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
 	var proxyPath = "https://cors-anywhere.herokuapp.com/";
 	
-	var statsVR;
 	var title, description;
 	
 	// Website: https://cse5542projectwlmt.weebly.com
@@ -43,6 +43,7 @@
 		clock = new THREE.Clock();
 		hotspots = [];
 		specimenGroup = new THREE.Group();
+		hudGroup = new THREE.Group();
 	
 		WIDTH = window.innerWidth * 0.98;
 		HEIGHT = window.innerHeight * 0.975;
@@ -54,7 +55,7 @@
 		
 		camera = new THREE.PerspectiveCamera(FOV, WIDTH / HEIGHT, 0.001, 700);
 		//translateGlobal(camera, 0,40,0);
-		//scene.add(camera);
+		scene.add(camera);
 			
 		// Create a renderer and add it to the DOM, enable shadows.
 		renderer = new THREE.WebGLRenderer({antialias:true});
@@ -101,39 +102,36 @@
 		//var helper = new THREE.CameraHelper( light.shadow.camera );
 		//scene.add( helper );
 
-		// //Setup non-VR controls.
-		// controls = new THREE.OrbitControls(camera, renderer.domElement);
-		// controls.target.set(
-			// camera.position.x + 0.15,
-			// camera.position.y,
-			// camera.position.z
-		// );
-		// controls.enablePan = false;
-		// controls.enableZoom = false;
+		//Setup non-VR controls.
+		controls = new THREE.OrbitControls(camera, renderer.domElement);
+		controls.target.set(
+			camera.position.x + 0.15,
+			camera.position.y,
+			camera.position.z
+		);
+		controls.enablePan = false;
+		controls.enableZoom = false;
 		
-		// // Setup DeviceOrientation functionality
-		// window.addEventListener('deviceorientation', setOrientationControls, true);
-		// function setOrientationControls(e) {
-			// if (!e.alpha) {
-				// // If DeviceOrientation controls cannot be set, return
-				// return;
-			// }
+		// Setup DeviceOrientation functionality
+		window.addEventListener('deviceorientation', setOrientationControls, true);
+		function setOrientationControls(e) {
+			if (!e.alpha) {
+				// If DeviceOrientation controls cannot be set, return
+				return;
+			}
 			
-			// // If we have a compatable device, replace controlls with VR controls
-			// controls = new THREE.DeviceOrientationControls(camera, true);
-			// controls.connect();
-			// controls.update();
-		// }
+			// If we have a compatable device, replace controlls with VR controls
+			controls = new THREE.DeviceOrientationControls(camera, true);
+			controls.connect();
+			controls.update();
+		}
 		
-		// // Allow fullscreen on screen click
-		// //renderer.domElement.addEventListener('click', fullscreen, false);
-		 // window.removeEventListener('deviceorientation', setOrientationControls, true);
+		// Allow fullscreen on screen click
+		//renderer.domElement.addEventListener('click', fullscreen, false);
+		 window.removeEventListener('deviceorientation', setOrientationControls, true);
 
 		//gui
 		//var gui = new dat.GUI();
-
-		statsVR = new StatsVR(scene, camera);
-		statsVR.setZ(-20);
 	}
 
 	function createSpecimen() {	
@@ -145,6 +143,18 @@
 		scene.add( ground );
 		translateGlobal(ground, 0, -80, 0);
 		rotateDegrees(ground, -90, 0, 0);
+		
+		var material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('https://66.media.tumblr.com/dfe4ad47049dadc766e7e3beac3c30f3/tumblr_pmvlwleprx1u5zuh1_540.jpg'), depthTest: true, transparent: false });
+        var geometry = new THREE.PlaneGeometry(1, 0.5, 1, 1);
+        hud = new THREE.Mesh(geometry, material);
+		scene.add(hud);
+		camera.add(hud);
+		hud.position.set(-0.5,-0.7,-1);
+		//hudGroup.add(hud);
+		//hudGroup.position.set(0,0,-5);
+		//scene.add(hudGroup);
+		
+
 		
 		// Load the specimen model and textures
 		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
@@ -253,10 +263,10 @@
 	}
 
 	function animate(){
-		statsVR.msStart();
-		
 		// Rotate our specimen
 		rotateDegrees(specimenGroup, 0, 1, 0);
+		
+		hudGroup.position.set
 	
 		// update the position of arrow
 		arrow.setDirection(raycaster.ray.direction);
@@ -308,14 +318,8 @@
 			}
 		}
 		
-		statsVR.setCustom1(title);
-		statsVR.setCustom2(description);
-		statsVR.update();
-		
-		statsVR.msEnd();
-		
-		//stereoEffect.render(scene, camera);
-		renderer.render(scene, camera);
+		stereoEffect.render(scene, camera);
+		//renderer.render(scene, camera);
 	}
 	
 	//====================== Transform Library ======================//
