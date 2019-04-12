@@ -6,14 +6,15 @@
 	
 	var raycaster, arrow;
 	var clock;
-	var hotspots;
+	var hotspots, hotspotMarkers, line;
 	var hotspotTriggered = false;
 	var specimenGroup, hudGroup;
-	var hud;
+	var hud, hotspotHUD;
 	
 	var hotspotDictionary = {
-		"Classification": "Family: Betulaceae<br />Genus: Betula",
-		"Habitat": "Deciduous trees<br />Northern Hemisphere<br />Temperate and Boreal climates",
+		"Main": new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('https://raw.githubusercontent.com/ToskinM/CSE5542_Project/master/Specimen/birchstump.png'), depthTest: true, transparent: true }),
+		"Classification": new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('https://raw.githubusercontent.com/ToskinM/CSE5542_Project/master/Specimen/classification.png'), depthTest: true, transparent: true }),
+		"Habitat": new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('https://raw.githubusercontent.com/ToskinM/CSE5542_Project/master/Specimen/habitat.png'), depthTest: true, transparent: true }),
 	};
 	
 	var assetPath = "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
@@ -26,7 +27,7 @@
 	// Set this to true to get models to load when testing locally.
 	// SET TO FALSE BEFORE UPLOADING TO WEBSITE OR PUSHING
 	// If you get a CORS Policy error, its probably this
-	var runningLocally = true;
+	var runningLocally = false;
 			
 	init();
 	//createRoombaCat();
@@ -42,6 +43,7 @@
 		specimen = new THREE.Object3D();
 		clock = new THREE.Clock();
 		hotspots = [];
+		hotspotMarkers = [];
 		specimenGroup = new THREE.Group();
 		hudGroup = new THREE.Group();
 	
@@ -102,36 +104,45 @@
 		//var helper = new THREE.CameraHelper( light.shadow.camera );
 		//scene.add( helper );
 
-		//Setup non-VR controls.
-		controls = new THREE.OrbitControls(camera, renderer.domElement);
-		controls.target.set(
-			camera.position.x + 0.15,
-			camera.position.y,
-			camera.position.z
-		);
-		controls.enablePan = false;
-		controls.enableZoom = false;
+		// //Setup non-VR controls.
+		// controls = new THREE.OrbitControls(camera, renderer.domElement);
+		// controls.target.set(
+			// camera.position.x + 0.15,
+			// camera.position.y,
+			// camera.position.z
+		// );
+		// controls.enablePan = false;
+		// controls.enableZoom = false;
 		
-		// Setup DeviceOrientation functionality
-		window.addEventListener('deviceorientation', setOrientationControls, true);
-		function setOrientationControls(e) {
-			if (!e.alpha) {
-				// If DeviceOrientation controls cannot be set, return
-				return;
-			}
+		// // Setup DeviceOrientation functionality
+		// window.addEventListener('deviceorientation', setOrientationControls, true);
+		// function setOrientationControls(e) {
+			// if (!e.alpha) {
+				// // If DeviceOrientation controls cannot be set, return
+				// return;
+			// }
 			
-			// If we have a compatable device, replace controlls with VR controls
-			controls = new THREE.DeviceOrientationControls(camera, true);
-			controls.connect();
-			controls.update();
-		}
+			// // If we have a compatable device, replace controlls with VR controls
+			// controls = new THREE.DeviceOrientationControls(camera, true);
+			// controls.connect();
+			// controls.update();
+		// }
 		
-		// Allow fullscreen on screen click
-		//renderer.domElement.addEventListener('click', fullscreen, false);
-		 window.removeEventListener('deviceorientation', setOrientationControls, true);
+		// // Allow fullscreen on screen click
+		// //renderer.domElement.addEventListener('click', fullscreen, false);
+		 // window.removeEventListener('deviceorientation', setOrientationControls, true);
 
 		//gui
 		//var gui = new dat.GUI();
+	}
+	
+	function createHotspotHUD(hotspot){
+        var geometry = new THREE.PlaneGeometry(1, 0.5, 1, 1);
+        hotspotHUD = new THREE.Mesh(geometry, hotspotDictionary[hotspot]);
+		
+		scene.add(hotspotHUD);
+		camera.add(hotspotHUD);
+		hotspotHUD.position.set(0.5,-0.7,-1);
 	}
 
 	function createSpecimen() {	
@@ -144,17 +155,18 @@
 		translateGlobal(ground, 0, -80, 0);
 		rotateDegrees(ground, -90, 0, 0);
 		
-		var material = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('https://66.media.tumblr.com/dfe4ad47049dadc766e7e3beac3c30f3/tumblr_pmvlwleprx1u5zuh1_540.jpg'), depthTest: true, transparent: false });
+		var material1 = new THREE.MeshLambertMaterial({color: 0x00ff00, transparent: true, opacity: 0.0});
         var geometry = new THREE.PlaneGeometry(1, 0.5, 1, 1);
-        hud = new THREE.Mesh(geometry, material);
+        hud = new THREE.Mesh(geometry, hotspotDictionary['Main']);
+        hotspotHUD = new THREE.Mesh(geometry, material1);
 		scene.add(hud);
+		scene.add(hotspotHUD);
 		camera.add(hud);
+		camera.add(hotspotHUD);
 		hud.position.set(-0.5,-0.7,-1);
-		//hudGroup.add(hud);
-		//hudGroup.position.set(0,0,-5);
-		//scene.add(hudGroup);
+		hotspotHUD.position.set(0.5,-0.7,-1);
 		
-
+		
 		
 		// Load the specimen model and textures
 		THREE.Loader.Handlers.add( /\.dds$/i, new THREE.DDSLoader() );
@@ -200,29 +212,41 @@
 	}
 	
 	function addHotspots(){
-		// Add first hotspot
-		var sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
+		var sphereGeometry = new THREE.SphereGeometry( 1, 32, 32 );
+		var sphereHotspotGeometry = new THREE.SphereGeometry( 10, 32, 32 );
+		
 		var sphereMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide});
+		var invisibleMaterial = new THREE.MeshBasicMaterial({color: 0x00ff00, transparent: true, opacity: 0.0});
+		
+		// Add first hotspot
 		var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-		sphere.name = 'Classification';
+		var sphereHotspot = new THREE.Mesh( sphereHotspotGeometry, invisibleMaterial );
+		sphereHotspot.name = 'Classification';
 		sphere.position.set(specimen.position.x - 2, specimen.position.y + 40, specimen.position.z - 5);
+		sphereHotspot.position.set(specimen.position.x - 2, specimen.position.y + 40, specimen.position.z - 5);
 		scene.add(sphere);
-		hotspots.push(sphere);
+		scene.add(sphereHotspot);
+		hotspotMarkers.push(sphere);
+		hotspots.push(sphereHotspot);
 		
 		// Add second hotspot
-		var sphereGeometry = new THREE.SphereGeometry( 5, 32, 32 );
-		var sphereMaterial = new THREE.MeshBasicMaterial({color: 0xffffff, side: THREE.DoubleSide});
-		var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-		sphere.name = 'Habitat';
+		sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+		sphereHotspot = new THREE.Mesh( sphereHotspotGeometry, invisibleMaterial );
+		sphereHotspot.name = 'Habitat';
 		sphere.position.set(specimen.position.x + 2, specimen.position.y + 10, specimen.position.z + 10);
+		sphereHotspot.position.set(specimen.position.x + 2, specimen.position.y + 10, specimen.position.z + 10);
 		scene.add(sphere);
-		hotspots.push(sphere);
+		scene.add(sphereHotspot);
+		hotspotMarkers.push(sphere);
+		hotspots.push(sphereHotspot);
 
 		// Group together the specimen and out hotspots, so they're 'points' on the specimen
 		specimenGroup.position.set(0, -20, -40);
 		specimenGroup.add(specimen)
 		specimenGroup.add(hotspots[0])
+		specimenGroup.add(hotspotMarkers[0])
 		specimenGroup.add(hotspots[1])
+		specimenGroup.add(hotspotMarkers[1])
 		scene.add(specimenGroup);
 
 		renderer.setAnimationLoop(animate);
@@ -252,14 +276,18 @@
 	
 	function changeParagraphText(text)
 	{
-		document.getElementById("info").innerHTML = "<p><font color=\"white\">"+text+"</font></p>";
-		title = text;
+		//document.getElementById("info").innerHTML = "<p><font color=\"white\">"+text+"</font></p>";
+		//title = text;
+		
+		hotspotHUD.material = text;
 	}
 
 	function changeHeaderText(text)
 	{
-		document.getElementById("header").innerHTML = "<p><font color=\"white\" size = \"6\">"+text+"</font></p>";
-		description = text;
+		//document.getElementById("header").innerHTML = "<p><font color=\"white\" size = \"6\">"+text+"</font></p>";
+		//description = text;
+		
+		hudRight.material = text;
 	}
 
 	function animate(){
@@ -292,8 +320,13 @@
 			if (scale < 1) {
 				scale = 1;
 			}
-			intersects[0].object.scale.set(scale, scale, scale);
-
+			
+			//intersects[0].object.scale.set(scale, scale, scale);
+			if (intersects[0].object.name === 'Classification')
+				hotspotMarkers[0].scale.set(scale, scale, scale);
+			else if (intersects[0].object.name === 'Habitat')
+				hotspotMarkers[1].scale.set(scale, scale, scale);
+			
 			// If the hotspot is looked at for 0.5 seconds, trigger UI update
 			if (!hotspotTriggered && clock.getElapsedTime() > 0.5) {
 				hotspotTriggered = true;
@@ -302,7 +335,7 @@
 				console.log(hotspotDictionary[intersects[0].object.name]);
 				
 				changeParagraphText(hotspotDictionary[intersects[0].object.name])
-				changeHeaderText(intersects[0].object.name)
+				//changeHeaderText(intersects[0].object.name)
 			}
 
 		} else {
@@ -317,9 +350,22 @@
 				hotspots[1].scale.set(1,1,1);
 			}
 		}
+		scene.remove(line);
+		var material = new THREE.LineBasicMaterial( { color: 0xffffff } );
+		var geometry = new THREE.Geometry();
 		
-		stereoEffect.render(scene, camera);
-		//renderer.render(scene, camera);
+		var worldPos = new THREE.Vector3();
+		var worldDir = new THREE.Vector3();
+		worldPos = hotspots[0].getWorldPosition(worldPos)
+		worldDir = hotspotHUD.getWorldPosition(worldDir)
+		geometry.vertices = [worldPos,worldDir]
+		//geometry.vertices.push(worldPos );
+		//geometry.vertices.push(worldDir );
+		line = new THREE.Line( geometry, material );
+		scene.add( line );
+		
+		//stereoEffect.render(scene, camera);
+		renderer.render(scene, camera);
 	}
 	
 	//====================== Transform Library ======================//
