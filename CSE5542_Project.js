@@ -28,7 +28,7 @@
 	// Set this to true to get models to load when testing locally.
 	// SET TO FALSE BEFORE UPLOADING TO WEBSITE OR PUSHING
 	// If you get a CORS Policy error, its probably this
-	var runningLocally = true;
+	var runningLocally = false;
 			
 	init();
 	createHUD();
@@ -104,33 +104,33 @@
 		//var helper = new THREE.CameraHelper( light.shadow.camera );
 		//scene.add( helper );
 
-		//Setup non-VR controls.
-		controls = new THREE.OrbitControls(camera, renderer.domElement);
-		controls.target.set(
-			camera.position.x + 0.15,
-			camera.position.y,
-			camera.position.z
-		);
-		controls.enablePan = false;
-		controls.enableZoom = false;
+		// //Setup non-VR controls.
+		// controls = new THREE.OrbitControls(camera, renderer.domElement);
+		// controls.target.set(
+			// camera.position.x + 0.15,
+			// camera.position.y,
+			// camera.position.z
+		// );
+		// controls.enablePan = false;
+		// controls.enableZoom = false;
 		
-		// Setup DeviceOrientation functionality
-		window.addEventListener('deviceorientation', setOrientationControls, true);
-		function setOrientationControls(e) {
-			if (!e.alpha) {
-				// If DeviceOrientation controls cannot be set, return
-				return;
-			}
+		// // Setup DeviceOrientation functionality
+		// window.addEventListener('deviceorientation', setOrientationControls, true);
+		// function setOrientationControls(e) {
+			// if (!e.alpha) {
+				// // If DeviceOrientation controls cannot be set, return
+				// return;
+			// }
 			
-			// If we have a compatable device, replace controlls with VR controls
-			controls = new THREE.DeviceOrientationControls(camera, true);
-			controls.connect();
-			controls.update();
-		}
+			// // If we have a compatable device, replace controlls with VR controls
+			// controls = new THREE.DeviceOrientationControls(camera, true);
+			// controls.connect();
+			// controls.update();
+		// }
 		
-		// Allow fullscreen on screen click
-		//renderer.domElement.addEventListener('click', fullscreen, false);
-		 window.removeEventListener('deviceorientation', setOrientationControls, true);
+		// // Allow fullscreen on screen click
+		// //renderer.domElement.addEventListener('click', fullscreen, false);
+		 // window.removeEventListener('deviceorientation', setOrientationControls, true);
 
 		//gui
 		//var gui = new dat.GUI();
@@ -375,8 +375,8 @@
 		}
 
 		
-		stereoEffect.render(scene, camera);
-		//renderer.render(scene, camera);
+		//stereoEffect.render(scene, camera);
+		renderer.render(scene, camera);
 	}
 	
 	//====================== Transform Library ======================//
