@@ -28,7 +28,7 @@
 	// Set this to true to get models to load when testing locally.
 	// SET TO FALSE BEFORE UPLOADING TO WEBSITE OR PUSHING
 	// If you get a CORS Policy error, its probably this
-	var runningLocally = false;
+	var runningLocally = true;
 			
 	init();
 	createHUD();
@@ -296,7 +296,7 @@
 
 	function animate(){
 		// Rotate our specimen
-		rotateDegrees(specimenGroup, 0, 1, 0);
+		rotateDegrees(specimenGroup, 0, 0.5, 0);
 		
 		hudGroup.position.set
 	
@@ -359,6 +359,8 @@
 				hotspotMarkers[1].scale.set(1,1,1);
 			}
 		}
+		
+		// Draw line to POI
 		scene.remove(line);
 		if (activeHotspot >= 0){
 			var material = new THREE.LineBasicMaterial( { color: 0xaaaaaa } );
