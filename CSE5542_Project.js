@@ -16,6 +16,7 @@
 		"Main": new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('https://raw.githubusercontent.com/ToskinM/CSE5542_Project/master/Specimen/birchstump.png'), depthTest: true, transparent: true }),
 		"Classification": new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('https://raw.githubusercontent.com/ToskinM/CSE5542_Project/master/Specimen/classification.png'), depthTest: true, transparent: true }),
 		"Habitat": new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('https://raw.githubusercontent.com/ToskinM/CSE5542_Project/master/Specimen/habitat.png'), depthTest: true, transparent: true }),
+		"POIInfo": new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load('https://raw.githubusercontent.com/ToskinM/CSE5542_Project/master/Specimen/point%20of%20interest.png'), depthTest: true, transparent: true }),
 	};
 	
 	var assetPath = "https://cse5542projectwlmt.weebly.com/files/theme/Specimen/";
@@ -28,7 +29,7 @@
 	// Set this to true to get models to load when testing locally.
 	// SET TO FALSE BEFORE UPLOADING TO WEBSITE OR PUSHING
 	// If you get a CORS Policy error, its probably this
-	var runningLocally = true;
+	var runningLocally = false;
 			
 	init();
 	createHUD();
@@ -153,7 +154,7 @@
 		
 		// HUD Text Areas
         hud = new THREE.Mesh(geometry, hotspotDictionary['Main']);
-        hotspotHUD = new THREE.Mesh(geometry, material1);
+        hotspotHUD = new THREE.Mesh(geometry, hotspotDictionary['POIInfo']);
 		scene.add(hud);
 		scene.add(hotspotHUD);
 		camera.add(hud);
@@ -226,8 +227,8 @@
 		var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
 		var sphereHotspot = new THREE.Mesh( sphereHotspotGeometry, invisibleMaterial );
 		sphereHotspot.name = 'Classification';
-		sphere.position.set(specimen.position.x - 2, specimen.position.y + 40, specimen.position.z - 5);
-		sphereHotspot.position.set(specimen.position.x - 2, specimen.position.y + 40, specimen.position.z - 5);
+		sphere.position.set(specimen.position.x - 2, specimen.position.y + 40, specimen.position.z - 4);
+		sphereHotspot.position.set(specimen.position.x - 2, specimen.position.y + 40, specimen.position.z - 4);
 		scene.add(sphere);
 		scene.add(sphereHotspot);
 		hotspotMarkers.push(sphere);
@@ -237,8 +238,8 @@
 		sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
 		sphereHotspot = new THREE.Mesh( sphereHotspotGeometry, invisibleMaterial );
 		sphereHotspot.name = 'Habitat';
-		sphere.position.set(specimen.position.x + 2, specimen.position.y + 10, specimen.position.z + 10);
-		sphereHotspot.position.set(specimen.position.x + 2, specimen.position.y + 10, specimen.position.z + 10);
+		sphere.position.set(specimen.position.x + 2, specimen.position.y + 10, specimen.position.z + 5);
+		sphereHotspot.position.set(specimen.position.x + 2, specimen.position.y + 10, specimen.position.z + 5);
 		scene.add(sphere);
 		scene.add(sphereHotspot);
 		hotspotMarkers.push(sphere);
